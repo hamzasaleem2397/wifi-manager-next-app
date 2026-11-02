@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { ThemeToggle } from "../components/ThemeToggle";
 
 // ── types ────────────────────────────────────────────────────────────────────
 
@@ -106,44 +107,44 @@ function DeviceRow({
 
   return (
     <div
-      className={`bg-gray-900 border rounded-lg transition hover:bg-gray-850 ${
+      className={`bg-white dark:bg-gray-900 border rounded-lg transition hover:bg-gray-50 dark:hover:bg-gray-850 shadow-sm dark:shadow-none ${
         device.blocked
-          ? "border-red-900/50 bg-red-950/10"
-          : "border-gray-800"
+          ? "border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/10"
+          : "border-gray-200 dark:border-gray-800"
       }`}
     >
       <div className="p-4 flex items-center gap-4">
         {/* Icon */}
         <div
           className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${
-            device.blocked ? "bg-red-900/30" : "bg-blue-900/30"
+            device.blocked ? "bg-red-100 dark:bg-red-900/30" : "bg-blue-100 dark:bg-blue-900/30"
           }`}
         >
           {device.blocked ? (
-            <BlockIcon className="w-5 h-5 text-red-400" />
+            <BlockIcon className="w-5 h-5 text-red-600 dark:text-red-400" />
           ) : (
-            <WifiIcon className="w-5 h-5 text-blue-400" />
+            <WifiIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
           )}
         </div>
 
         {/* Name & Details */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <h3 className="font-semibold text-white truncate">{displayName}</h3>
+            <h3 className="font-semibold text-gray-900 dark:text-white truncate">{displayName}</h3>
             <span
               className={`flex-shrink-0 text-xs font-medium px-2 py-0.5 rounded-full ${
                 device.blocked
-                  ? "bg-red-900/50 text-red-400"
+                  ? "bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-400"
                   : device.status === "Offline"
-                  ? "bg-gray-800 text-gray-500"
-                  : "bg-green-900/50 text-green-400"
+                  ? "bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-500"
+                  : "bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-400"
               }`}
             >
               {device.blocked ? "Blocked" : device.status === "Offline" ? "Offline" : "Online"}
             </span>
           </div>
           
-          <div className="flex items-center gap-4 text-xs text-gray-400">
+          <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
             <span className="font-mono">{device.mac}</span>
             {device.ip && <span className="font-mono">{device.ip}</span>}
             {device.port && <span>{device.port}</span>}
@@ -157,7 +158,7 @@ function DeviceRow({
                 value={aliasInput}
                 onChange={(e) => setAliasInput(e.target.value)}
                 placeholder="Enter nickname..."
-                className="flex-1 bg-gray-800 border border-gray-700 rounded px-2 py-1 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="flex-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded px-2 py-1 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") handleAliasSave();
                   if (e.key === "Escape") setEditingAlias(false);
@@ -167,26 +168,26 @@ function DeviceRow({
               <button
                 onClick={handleAliasSave}
                 disabled={busy}
-                className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium px-3 py-1 rounded transition disabled:opacity-50"
+                className="bg-blue-600 hover:bg-blue-500 dark:bg-blue-700 dark:hover:bg-blue-600 text-white text-xs font-medium px-3 py-1 rounded transition disabled:opacity-50"
               >
                 Save
               </button>
               <button
                 onClick={() => setEditingAlias(false)}
-                className="bg-gray-700 hover:bg-gray-600 text-white text-xs font-medium px-3 py-1 rounded transition"
+                className="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-white text-xs font-medium px-3 py-1 rounded transition"
               >
                 Cancel
               </button>
             </div>
           ) : device.alias ? (
             <div className="flex items-center gap-2 mt-1">
-              <span className="text-xs text-gray-500">aka {device.hostname}</span>
+              <span className="text-xs text-gray-500 dark:text-gray-500">aka {device.hostname}</span>
               <button
                 onClick={() => {
                   setAliasInput(device.alias ?? "");
                   setEditingAlias(true);
                 }}
-                className="text-xs text-gray-600 hover:text-gray-400 transition"
+                className="text-xs text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400 transition"
               >
                 <PencilIcon className="w-3 h-3" />
               </button>
@@ -197,7 +198,7 @@ function DeviceRow({
                 setAliasInput("");
                 setEditingAlias(true);
               }}
-              className="flex items-center gap-1 text-xs text-gray-600 hover:text-gray-400 transition mt-1"
+              className="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400 transition mt-1"
             >
               <PencilIcon className="w-3 h-3" />
               Add nickname
@@ -212,8 +213,8 @@ function DeviceRow({
             disabled={busy}
             className={`text-sm font-medium px-4 py-2 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed ${
               device.blocked
-                ? "bg-green-900/50 hover:bg-green-900 text-green-300 border border-green-800"
-                : "bg-red-950/50 hover:bg-red-950 text-red-400 border border-red-900"
+                ? "bg-green-100 hover:bg-green-200 dark:bg-green-900/50 dark:hover:bg-green-900 text-green-700 dark:text-green-300 border border-green-300 dark:border-green-800"
+                : "bg-red-50 hover:bg-red-100 dark:bg-red-950/50 dark:hover:bg-red-950 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900"
             }`}
           >
             {busy ? "..." : device.blocked ? "Unblock" : "Block"}
@@ -296,37 +297,38 @@ export default function DashboardPage() {
   const blockedCount = devices.filter((d) => d.blocked).length;
 
   return (
-    <div className="min-h-screen bg-gray-950">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Header */}
-      <header className="border-b border-gray-800 bg-gray-900 px-4 py-3 sticky top-0 z-10">
+      <header className="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-3 sticky top-0 z-10 shadow-sm dark:shadow-none">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center">
+            <div className="w-9 h-9 bg-blue-600 dark:bg-blue-700 rounded-xl flex items-center justify-center">
               <WifiIcon className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="font-bold text-white leading-none">
+              <h1 className="font-bold text-gray-900 dark:text-white leading-none">
                 WiFi Manager
               </h1>
-              <p className="text-gray-500 text-xs mt-0.5">Huawei HG8145C</p>
+              <p className="text-gray-500 dark:text-gray-500 text-xs mt-0.5">Huawei HG8145C</p>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
             {lastRefresh && (
-              <span className="text-gray-600 text-xs hidden sm:block">
+              <span className="text-gray-500 dark:text-gray-600 text-xs hidden sm:block">
                 {lastRefresh.toLocaleTimeString()}
               </span>
             )}
+            <ThemeToggle />
             <button
               onClick={fetchDevices}
-              className="text-gray-400 hover:text-white transition px-3 py-1.5 rounded-lg hover:bg-gray-800 text-sm"
+              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white transition px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-sm"
             >
               ↻ Refresh
             </button>
             <button
               onClick={handleLogout}
-              className="text-gray-400 hover:text-red-400 transition px-3 py-1.5 rounded-lg hover:bg-gray-800 text-sm"
+              className="text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-sm"
             >
               Sign out
             </button>
@@ -337,32 +339,32 @@ export default function DashboardPage() {
       <main className="max-w-6xl mx-auto px-4 py-6">
         {/* Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
-            <p className="text-3xl font-bold text-white">{devices.length}</p>
-            <p className="text-gray-500 text-sm mt-1">Total</p>
+          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 text-center shadow-sm dark:shadow-none">
+            <p className="text-3xl font-bold text-gray-900 dark:text-white">{devices.length}</p>
+            <p className="text-gray-500 dark:text-gray-500 text-sm mt-1">Total</p>
           </div>
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
-            <p className="text-3xl font-bold text-green-400">{onlineCount}</p>
-            <p className="text-gray-500 text-sm mt-1">Online</p>
+          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 text-center shadow-sm dark:shadow-none">
+            <p className="text-3xl font-bold text-green-600 dark:text-green-400">{onlineCount}</p>
+            <p className="text-gray-500 dark:text-gray-500 text-sm mt-1">Online</p>
           </div>
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
-            <p className="text-3xl font-bold text-gray-400">{offlineCount}</p>
-            <p className="text-gray-500 text-sm mt-1">Offline</p>
+          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 text-center shadow-sm dark:shadow-none">
+            <p className="text-3xl font-bold text-gray-500 dark:text-gray-400">{offlineCount}</p>
+            <p className="text-gray-500 dark:text-gray-500 text-sm mt-1">Offline</p>
           </div>
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
-            <p className="text-3xl font-bold text-red-400">{blockedCount}</p>
-            <p className="text-gray-500 text-sm mt-1">Blocked</p>
+          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 text-center shadow-sm dark:shadow-none">
+            <p className="text-3xl font-bold text-red-600 dark:text-red-400">{blockedCount}</p>
+            <p className="text-gray-500 dark:text-gray-500 text-sm mt-1">Blocked</p>
           </div>
         </div>
 
         {/* Filter Tabs */}
-        <div className="flex gap-2 mb-4 border-b border-gray-800 overflow-x-auto">
+        <div className="flex gap-2 mb-4 border-b border-gray-200 dark:border-gray-800 overflow-x-auto">
           <button
             onClick={() => setActiveTab("all")}
             className={`px-4 py-2 text-sm font-medium transition border-b-2 -mb-px whitespace-nowrap ${
               activeTab === "all"
-                ? "border-blue-500 text-blue-400"
-                : "border-transparent text-gray-500 hover:text-gray-300"
+                ? "border-blue-500 text-blue-600 dark:text-blue-400"
+                : "border-transparent text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
             }`}
           >
             All ({devices.length})
@@ -371,8 +373,8 @@ export default function DashboardPage() {
             onClick={() => setActiveTab("online")}
             className={`px-4 py-2 text-sm font-medium transition border-b-2 -mb-px whitespace-nowrap ${
               activeTab === "online"
-                ? "border-green-500 text-green-400"
-                : "border-transparent text-gray-500 hover:text-gray-300"
+                ? "border-green-500 text-green-600 dark:text-green-400"
+                : "border-transparent text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
             }`}
           >
             Online ({onlineCount})
@@ -381,8 +383,8 @@ export default function DashboardPage() {
             onClick={() => setActiveTab("offline")}
             className={`px-4 py-2 text-sm font-medium transition border-b-2 -mb-px whitespace-nowrap ${
               activeTab === "offline"
-                ? "border-gray-500 text-gray-400"
-                : "border-transparent text-gray-500 hover:text-gray-300"
+                ? "border-gray-500 text-gray-600 dark:text-gray-400"
+                : "border-transparent text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
             }`}
           >
             Offline ({offlineCount})
@@ -391,8 +393,8 @@ export default function DashboardPage() {
             onClick={() => setActiveTab("blocked")}
             className={`px-4 py-2 text-sm font-medium transition border-b-2 -mb-px whitespace-nowrap ${
               activeTab === "blocked"
-                ? "border-red-500 text-red-400"
-                : "border-transparent text-gray-500 hover:text-gray-300"
+                ? "border-red-500 text-red-600 dark:text-red-400"
+                : "border-transparent text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
             }`}
           >
             Blocked ({blockedCount})
@@ -401,32 +403,32 @@ export default function DashboardPage() {
 
         {/* Error */}
         {error && (
-          <div className="bg-red-950 border border-red-800 rounded-xl px-4 py-3 mb-6 text-red-300 text-sm">
+          <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-xl px-4 py-3 mb-6 text-red-600 dark:text-red-300 text-sm">
             {error}
           </div>
         )}
 
         {/* Loading */}
         {loading && (
-          <div className="text-center py-16 text-gray-500">
-            <div className="inline-block w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mb-3" />
+          <div className="text-center py-16 text-gray-500 dark:text-gray-500">
+            <div className="inline-block w-6 h-6 border-2 border-blue-600 dark:border-blue-500 border-t-transparent rounded-full animate-spin mb-3" />
             <p>Loading devices...</p>
           </div>
         )}
 
         {/* Empty state */}
         {!loading && !error && filteredDevices.length === 0 && devices.length === 0 && (
-          <div className="text-center py-16 text-gray-500">
-            <WifiIcon className="w-12 h-12 mx-auto mb-3 text-gray-700" />
-            <p className="font-medium text-gray-400">No devices found</p>
+          <div className="text-center py-16 text-gray-500 dark:text-gray-500">
+            <WifiIcon className="w-12 h-12 mx-auto mb-3 text-gray-300 dark:text-gray-700" />
+            <p className="font-medium text-gray-600 dark:text-gray-400">No devices found</p>
             <p className="text-sm mt-1">Check router connection</p>
           </div>
         )}
 
         {/* No results for filter */}
         {!loading && !error && filteredDevices.length === 0 && devices.length > 0 && (
-          <div className="text-center py-16 text-gray-500">
-            <p className="font-medium text-gray-400">No {activeTab} devices</p>
+          <div className="text-center py-16 text-gray-500 dark:text-gray-500">
+            <p className="font-medium text-gray-600 dark:text-gray-400">No {activeTab} devices</p>
           </div>
         )}
 
