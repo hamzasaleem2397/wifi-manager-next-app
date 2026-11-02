@@ -15,7 +15,7 @@ async function validateRouterCredentials(
     });
     if (!tokenRes.ok) return false;
     const token = (await tokenRes.text()).trim();
-
+console.log(token,"token")
     // Try to login
     const loginRes = await fetch(`http://${ip}/login.cgi`, {
       method: "POST",
@@ -33,7 +33,7 @@ async function validateRouterCredentials(
       redirect: "manual",
       signal: AbortSignal.timeout(8000),
     });
-
+console.log(loginRes,"RLOGIN RES")
     // Check if login was successful by looking for id=1 in cookie
     const setCookieHeader = loginRes.headers.get("set-cookie");
     if (!setCookieHeader) return false;
