@@ -11,7 +11,7 @@ async function validateRouterCredentials(
     // Get token from router
     const tokenRes = await fetch(`http://${ip}/asp/GetRandCount.asp`, {
       headers: { "User-Agent": "Mozilla/5.0" },
-      signal: AbortSignal.timeout(5000),
+      signal: AbortSignal.timeout(15000),
     });
     if (!tokenRes.ok) return false;
     const token = (await tokenRes.text()).trim();
@@ -31,7 +31,7 @@ console.log(token,"token")
         "x.X_HW_Token": token,
       }).toString(),
       redirect: "manual",
-      signal: AbortSignal.timeout(8000),
+      signal: AbortSignal.timeout(15000),
     });
 console.log(loginRes,"RLOGIN RES")
     // Check if login was successful by looking for id=1 in cookie
