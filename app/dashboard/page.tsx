@@ -238,23 +238,35 @@ export default function DashboardPage() {
   const fetchDevices = useCallback(async () => {
     setError("");
     try {
+      console.log("[wifi-manager] Fetching devices...");
       const res = await fetch("/api/devices");
+      console.log("[wifi-manager] /api/devices →", res.status, res.statusText);
+
       if (res.status === 401) {
+        console.warn("[wifi-manager] Not authenticated, redirecting to login");
         router.push("/login");
         return;
       }
-      if (!res.ok) throw new Error("Failed to fetch devices");
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({}));
+        console.error("[wifi-manager] API error:", res.status, errBody);
+        throw new Error(errBody?.error ?? `Server error (${res.status})`);
+      }
       const data = await res.json();
+      console.log(`[wifi-manager] Got ${data.devices?.length ?? 0} devices:`, data.devices);
       setDevices(data.devices ?? []);
       setLastRefresh(new Date());
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Failed to load devices.");
+      const msg = e instanceof Error ? e.message : "Failed to load devices.";
+      console.error("[wifi-manager] fetchDevices failed:", msg);
+      setError(msg);
     } finally {
       setLoading(false);
     }
   }, [router]);
 
   useEffect(() => {
+    console.log("[wifi-manager] Dashboard mounted. Starting initial fetch + 40s auto-refresh.");
     fetchDevices();
     // Auto-refresh every 30 seconds
     const id = setInterval(fetchDevices, 40_000);
@@ -267,20 +279,26 @@ export default function DashboardPage() {
   }
 
   async function handleBlock(mac: string, action: "block" | "unblock") {
-    await fetch("/api/block", {
+    console.log(`[wifi-manager] ${action} →`, mac);
+    const res = await fetch("/api/block", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ mac, action }),
     });
+    const data = await res.json().catch(() => ({}));
+    console.log(`[wifi-manager] ${action} result →`, res.status, data);
+    if (!res.ok) console.error(`[wifi-manager] ${action} failed:`, data?.error);
     await fetchDevices();
   }
 
   async function handleAlias(mac: string, alias: string) {
-    await fetch("/api/alias", {
+    console.log(`[wifi-manager] setAlias → mac=${mac} alias="${alias}"`);
+    const res = await fetch("/api/alias", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ mac, alias }),
     });
+    console.log("[wifi-manager] alias result →", res.status);
     await fetchDevices();
   }
 
@@ -404,7 +422,9 @@ export default function DashboardPage() {
         {/* Error */}
         {error && (
           <div className="flex-shrink-0 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-xl px-4 py-3 mb-4 text-red-600 dark:text-red-300 text-sm">
-            {error}
+            <p className="font-medium">⚠ Error</p>
+            <p className="mt-0.5 font-mono text-xs opacity-80">{error}</p>
+            <p className="mt-1 text-xs opacity-60">Check browser console (F12) for details</p>
           </div>
         )}
 
