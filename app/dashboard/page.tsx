@@ -297,9 +297,9 @@ export default function DashboardPage() {
   const blockedCount = devices.filter((d) => d.blocked).length;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="h-screen flex flex-col bg-gray-50 dark:bg-gray-950 overflow-hidden">
       {/* Header */}
-      <header className="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-3 sticky top-0 z-10 shadow-sm dark:shadow-none">
+      <header className="flex-shrink-0 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-3 z-10 shadow-sm dark:shadow-none">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 bg-blue-600 dark:bg-blue-700 rounded-xl flex items-center justify-center">
@@ -319,7 +319,6 @@ export default function DashboardPage() {
                 {lastRefresh.toLocaleTimeString()}
               </span>
             )}
-            <ThemeToggle />
             <button
               onClick={fetchDevices}
               className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white transition px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-sm"
@@ -332,13 +331,14 @@ export default function DashboardPage() {
             >
               Sign out
             </button>
+            <ThemeToggle />
           </div>
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-6">
+      <main className="flex-1 overflow-hidden flex flex-col max-w-6xl w-full mx-auto px-4 py-6">
         {/* Stats */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+        <div className="flex-shrink-0 grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
           <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 text-center shadow-sm dark:shadow-none">
             <p className="text-3xl font-bold text-gray-900 dark:text-white">{devices.length}</p>
             <p className="text-gray-500 dark:text-gray-500 text-sm mt-1">Total</p>
@@ -358,7 +358,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Filter Tabs */}
-        <div className="flex gap-2 mb-4 border-b border-gray-200 dark:border-gray-800 overflow-x-auto">
+        <div className="flex-shrink-0 flex gap-2 mb-4 border-b border-gray-200 dark:border-gray-800">
           <button
             onClick={() => setActiveTab("all")}
             className={`px-4 py-2 text-sm font-medium transition border-b-2 -mb-px whitespace-nowrap ${
@@ -403,48 +403,59 @@ export default function DashboardPage() {
 
         {/* Error */}
         {error && (
-          <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-xl px-4 py-3 mb-6 text-red-600 dark:text-red-300 text-sm">
+          <div className="flex-shrink-0 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-xl px-4 py-3 mb-4 text-red-600 dark:text-red-300 text-sm">
             {error}
           </div>
         )}
 
-        {/* Loading */}
-        {loading && (
-          <div className="text-center py-16 text-gray-500 dark:text-gray-500">
-            <div className="inline-block w-6 h-6 border-2 border-blue-600 dark:border-blue-500 border-t-transparent rounded-full animate-spin mb-3" />
-            <p>Loading devices...</p>
-          </div>
-        )}
+        {/* Scrollable device area */}
+        <div className="flex-1 overflow-y-auto min-h-0 pr-1
+          [&::-webkit-scrollbar]:w-1.5
+          [&::-webkit-scrollbar-track]:bg-transparent
+          [&::-webkit-scrollbar-thumb]:rounded-full
+          [&::-webkit-scrollbar-thumb]:bg-gray-300
+          dark:[&::-webkit-scrollbar-thumb]:bg-gray-700
+          [&::-webkit-scrollbar-thumb]:hover:bg-gray-400
+          dark:[&::-webkit-scrollbar-thumb]:hover:bg-gray-600">
 
-        {/* Empty state */}
-        {!loading && !error && filteredDevices.length === 0 && devices.length === 0 && (
-          <div className="text-center py-16 text-gray-500 dark:text-gray-500">
-            <WifiIcon className="w-12 h-12 mx-auto mb-3 text-gray-300 dark:text-gray-700" />
-            <p className="font-medium text-gray-600 dark:text-gray-400">No devices found</p>
-            <p className="text-sm mt-1">Check router connection</p>
-          </div>
-        )}
+          {/* Loading */}
+          {loading && (
+            <div className="text-center py-16 text-gray-500 dark:text-gray-500">
+              <div className="inline-block w-6 h-6 border-2 border-blue-600 dark:border-blue-500 border-t-transparent rounded-full animate-spin mb-3" />
+              <p>Loading devices...</p>
+            </div>
+          )}
 
-        {/* No results for filter */}
-        {!loading && !error && filteredDevices.length === 0 && devices.length > 0 && (
-          <div className="text-center py-16 text-gray-500 dark:text-gray-500">
-            <p className="font-medium text-gray-600 dark:text-gray-400">No {activeTab} devices</p>
-          </div>
-        )}
+          {/* Empty state */}
+          {!loading && !error && filteredDevices.length === 0 && devices.length === 0 && (
+            <div className="text-center py-16 text-gray-500 dark:text-gray-500">
+              <WifiIcon className="w-12 h-12 mx-auto mb-3 text-gray-300 dark:text-gray-700" />
+              <p className="font-medium text-gray-600 dark:text-gray-400">No devices found</p>
+              <p className="text-sm mt-1">Check router connection</p>
+            </div>
+          )}
 
-        {/* Device List */}
-        {filteredDevices.length > 0 && (
-          <div className="space-y-2">
-            {filteredDevices.map((d) => (
-              <DeviceRow
-                key={d.mac}
-                device={d}
-                onBlock={handleBlock}
-                onAlias={handleAlias}
-              />
-            ))}
-          </div>
-        )}
+          {/* No results for filter */}
+          {!loading && !error && filteredDevices.length === 0 && devices.length > 0 && (
+            <div className="text-center py-16 text-gray-500 dark:text-gray-500">
+              <p className="font-medium text-gray-600 dark:text-gray-400">No {activeTab} devices</p>
+            </div>
+          )}
+
+          {/* Device List */}
+          {filteredDevices.length > 0 && (
+            <div className="space-y-2 pb-4">
+              {filteredDevices.map((d) => (
+                <DeviceRow
+                  key={d.mac}
+                  device={d}
+                  onBlock={handleBlock}
+                  onAlias={handleAlias}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </main>
     </div>
   );

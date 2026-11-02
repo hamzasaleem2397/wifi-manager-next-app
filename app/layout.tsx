@@ -29,7 +29,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-full bg-white dark:bg-gray-950 text-gray-900 dark:text-white font-sans antialiased transition-colors">
+      <body className="h-full overflow-hidden bg-white dark:bg-gray-950 text-gray-900 dark:text-white font-sans antialiased transition-colors">
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
